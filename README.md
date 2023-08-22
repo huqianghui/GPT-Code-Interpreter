@@ -23,7 +23,7 @@ https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/b79a4c86-8afb-
    ![image](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/cfe0e09c-6598-4da0-84d9-8e2d0990c3ba)
 
 2. https://github.com/shroominic/codeinterpreter-api
-![image](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/371489e2-43a1-4769-8f3e-cc87ddd95bd4)
+<img width="1283" alt="Screenshot 2023-08-22 at 15 22 40" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/d1ea5d97-e65a-4179-9395-b7b9d7018ad1">
 
 3. https://github.com/mckaywrigley/chatbot-ui/
    ![image](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/28cbca39-861c-48f2-be8e-66d3333d04b5)
