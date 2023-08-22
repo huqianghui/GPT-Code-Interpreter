@@ -23,6 +23,9 @@ a. https://github.com/ricklamers/gpt-code-ui
    ![image](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/cfe0e09c-6598-4da0-84d9-8e2d0990c3ba)
 
 b. https://github.com/shroominic/codeinterpreter-api
+
+clone下来，运行起来，遇到一个错误。(https://github.com/shroominic/codeinterpreter-api/issues/97)
+
 <img width="1283" alt="Screenshot 2023-08-22 at 15 22 40" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/d1ea5d97-e65a-4179-9395-b7b9d7018ad1">
 
 ### 3. 当前是从 https://github.com/ricklamers/gpt-code-ui 拷贝过来，做一些简单的分析。
