@@ -72,7 +72,7 @@ d. 示例运行
    connect to the mysql server by the connection information:（
     host="codex-sample-server.mysql.database.azure.com",
     user="huqianghui",
-    password="hqh@163.com2025",
+    password="XXXXX",
     database="codex-sample"
 )，query the books table, group by column "authors" of top 5 in bar picture.
 
