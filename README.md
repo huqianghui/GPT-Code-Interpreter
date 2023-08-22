@@ -40,9 +40,9 @@ a. prompt解析
 b. 配置
 根据.env.azure-exampl 来配置相应的变量，然后修改文件为.env文件。
 代码启动的时候，会去读这个文件。
-'''python
+```python
 load_dotenv('.env')
-'''
+```
 
 c. 运行方式
 
