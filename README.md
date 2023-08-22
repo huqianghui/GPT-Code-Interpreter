@@ -15,7 +15,7 @@ https://openai.com/blog/chatgpt-plugins#code-interpreter
 
 https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/b79a4c86-8afb-4b87-affd-5f00ca0222a0
 
-*** 需要开通openAI plus，每个月支付20刀才能使用。***
+***需要开通openAI plus，每个月支付20刀才能使用***
 
 ### 2. 开源代码不同实现
 
