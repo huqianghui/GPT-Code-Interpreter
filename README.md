@@ -66,6 +66,9 @@ d. 示例运行
 3） 图片处理，变大小，改变颜色等。
 <img width="1367" alt="Screenshot 2023-08-22 at 16 23 17" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/17e73f89-61ee-441c-82b5-691dac55fc40">
 
+<img width="1444" alt="Screenshot 2023-08-22 at 16 36 20" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/94a97c02-05ff-4301-aac6-36c17ccb0b44">
+
+
 
 
 
