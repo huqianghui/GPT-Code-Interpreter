@@ -55,6 +55,17 @@ c. 运行方式
 然后就可以直接运行 gpt_code_ui/webapp/main.py文件
 
 
+d. 示例运行
+
+1） 上传一个csv文件，让它给出一些可视化统计。(Can you run some basic visualization?)
+<img width="769" alt="Screenshot 2023-08-22 at 15 52 43" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/01f91eba-3cae-4841-8d67-e6fcca37885a">
+
+2） 根据URL等，生成QR code
+<img width="1322" alt="Screenshot 2023-08-22 at 15 50 14" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/bd403f8b-0157-4e04-bbef-6fefd648cf19">
+
+3） 图片处理，变大小，改变颜色等。
+
+
 
 
 
