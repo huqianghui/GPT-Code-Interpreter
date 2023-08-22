@@ -1,4 +1,4 @@
-###  1. openAI的chatgpt提供新功能 code interpreter 
+![image](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/371489e2-43a1-4769-8f3e-cc87ddd95bd4)###  1. openAI的chatgpt提供新功能 code interpreter 
 代码解释器特别有用的用例如下：
 
 1. 解决定量和定性数学问题
@@ -14,4 +14,21 @@ https://openai.com/blog/chatgpt-plugins#code-interpreter
 功能演示如下：
 
 https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/b79a4c86-8afb-4b87-affd-5f00ca0222a0
+
+*** 需要开通openAI plus，每个月支付20刀才能使用。***
+
+### 2. 开源代码不同实现
+
+1. https://github.com/ricklamers/gpt-code-ui
+   ![image](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/cfe0e09c-6598-4da0-84d9-8e2d0990c3ba)
+
+2. https://github.com/shroominic/codeinterpreter-api
+
+3. https://github.com/mckaywrigley/chatbot-ui/
+   ![image](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/28cbca39-861c-48f2-be8e-66d3333d04b5)
+
+### 3. 当前是从 https://github.com/ricklamers/gpt-code-ui 拷贝过来，做一些简单的分析。
+
+
+
 
