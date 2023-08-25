@@ -79,7 +79,7 @@ d. 示例运行
     database="codex-sample"
 )，query the books table, group by column "authors" of top 5 in bar picture.
 
-<img width="1503" alt="Screenshot 2023-08-22 at 21 25 13" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/8d27646a-aef1-471a-940d-b79cc1f54664">
+<img width="1503" alt="262365764-8d27646a-aef1-471a-940d-b79cc1f54664" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/cba42275-8e3b-470d-82f9-40424fa1bb17">
 
 <img width="1435" alt="Screenshot 2023-08-22 at 21 24 41" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/2308848d-4718-4ebb-9aa7-71da18fe4f3c">
 
