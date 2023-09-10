@@ -1,4 +1,4 @@
-###  1. openAI的chatgpt提供新功能 code interpreter 
+![image](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/40719ece-7990-4b0e-9dcc-4138bf06a698)###  1. openAI的chatgpt提供新功能 code interpreter 
 
 ![gpt-code-diagram](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/d3ffedac-03e5-4447-a620-ca4d24e1f974)
 
@@ -96,6 +96,42 @@ f. 运行稳定性优化
    [为容器和 Pod 分配内存资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/) | [为容器和 Pods 分配 CPU 资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-cpu-resource/))
 
   ***如果使用其他的serverless,比如web app或者container app也要对资源做相应的配置***
+
+2） 如果单个azure openAI，用户多的时候，容易出现限流
+
+   ***通过roundrobin 方式，轮训和retry***
+
+3) 上传文件，如果部署多个pod的时候，出现文件找不到。(session也没有粘合)
+
+   [绑定azure file的PVC](https://learn.microsoft.com/en-us/azure/aks/azure-csi-files-storage-provision)
+
+   [NFS共享访问](https://learn.microsoft.com/zh-cn/azure/storage/blobs/network-file-system-protocol-support-how-to)
+
+   或者serverless对storage的支持。
+
+   ***代码都要做相应的调整***
+
+4) 代码出现错过的概率也有
+
+   ***用python语法树，做语法检查。然后inject prompt，再re-generate code***
+
+   ***支持pip install 通过正则匹配过滤掉***
+
+5) 使用过程中，数据出现错误，比如null值等。包括生产的代码里面运行时异常
+
+   ***常见问候，导致的代码错误，通过拒绝回答来避免错误***
+
+   ***比如去访问的数据结构，比如询问天气，调用的API是401错误，但是没有判断，所以接下来会出现runtime Exception，不生成python来规避***
+
+   ***数据空指针等，目前应对，实际情况，考虑prompt内置一些防御的prompt，比如过滤null等让用户体验更好。***
+
+6）回答的内容，需要用用户的语言来描述和注释
+
+用azure TextAnalyticsClient来检测语言的时候，***也有随机性如果输入太少比如：你好经常识别成英语，如果指定地域cn的话，容易识别成 繁体字***
+
+ 
+ 
+
 
 
 
