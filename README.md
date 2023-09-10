@@ -87,6 +87,15 @@ d. 示例运行
 <img width="1435" alt="Screenshot 2023-08-22 at 21 24 41" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/2308848d-4718-4ebb-9aa7-71da18fe4f3c">
 
 
+f. 运行稳定性优化
+
+1） Kernel 进程默认如果不指定资源cpu和memory会卡主。
+   
+   ***指定了2core 4G之后，得到明显好转***
+   (规范一下资源模版: [为容器和 Pod 分配内存资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/) | [为容器和 Pods 分配 CPU 资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-cpu-resource/))
+
+
+
 
 
 
