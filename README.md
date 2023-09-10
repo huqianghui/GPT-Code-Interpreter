@@ -92,9 +92,10 @@ f. 运行稳定性优化
 1） Kernel 进程默认如果不指定资源cpu和memory会卡主。
    
    ***指定了2core 4G之后，得到明显好转***
-   (规范一下资源模版: [为容器和 Pod 分配内存资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/) | [为容器和 Pods 分配 CPU 资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-cpu-resource/))
+   (规范一下资源模版: 
+   [为容器和 Pod 分配内存资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/) | [为容器和 Pods 分配 CPU 资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-cpu-resource/))
 
-
+  ***如果使用其他的serverless,比如web app或者container app也要对资源做相应的配置***
 
 
 
