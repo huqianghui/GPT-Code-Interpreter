@@ -33,21 +33,21 @@ clone下来，运行起来，遇到一个错误。(https://github.com/shroominic
 
 ### 3. 当前是从 https://github.com/ricklamers/gpt-code-ui 拷贝过来，做一些简单的分析。
 
-a. prompt解析
+#### a. prompt解析
 
 想应用LLM，prompt至关重要，所以首先来看一下prompt是怎么写的。
 
 在文件：gpt_code_ui/webapp/main.py中
 <img width="1453" alt="Screenshot 2023-08-22 at 15 36 34" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/22dafe9b-92b9-4701-a1bc-6600c6cb0518">
 
-b. 配置
+#### b. 配置
 根据.env.azure-exampl 来配置相应的变量，然后修改文件为.env文件。
 代码启动的时候，会去读这个文件。
 ```python
 load_dotenv('.env')
 ```
 
-c. 运行方式
+#### c. 运行方式
 
 除了直接通过pip install 生成可执行文件gptcode之外，还可以通过make 命令把静态资源打包到gpt_code_ui/webapp/static下面。
 
@@ -58,20 +58,20 @@ c. 运行方式
 然后就可以直接运行 gpt_code_ui/webapp/main.py文件
 
 
-d. 示例运行
+#### d. 示例运行
 
-1） 上传一个csv文件，让它给出一些可视化统计。(Can you run some basic visualization?)
+##### 1） 上传一个csv文件，让它给出一些可视化统计。(Can you run some basic visualization?)
 <img width="769" alt="Screenshot 2023-08-22 at 15 52 43" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/01f91eba-3cae-4841-8d67-e6fcca37885a">
 
-2） 根据URL等，生成QR code
+##### 2） 根据URL等，生成QR code
 <img width="1322" alt="Screenshot 2023-08-22 at 15 50 14" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/bd403f8b-0157-4e04-bbef-6fefd648cf19">
 
-3） 图片处理，变大小，改变颜色等。
+##### 3） 图片处理，变大小，改变颜色等。
 <img width="1367" alt="Screenshot 2023-08-22 at 16 23 17" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/17e73f89-61ee-441c-82b5-691dac55fc40">
 
 <img width="1444" alt="Screenshot 2023-08-22 at 16 36 20" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/94a97c02-05ff-4301-aac6-36c17ccb0b44">
 
-4) mysql 数据库连接，查询数据
+##### 4) mysql 数据库连接，查询数据
 
    prompt :
 
@@ -87,9 +87,9 @@ d. 示例运行
 <img width="1435" alt="Screenshot 2023-08-22 at 21 24 41" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/2308848d-4718-4ebb-9aa7-71da18fe4f3c">
 
 
-f. 运行稳定性优化
+#### f. 运行稳定性优化
 
-1） Kernel 进程默认如果不指定资源cpu和memory会卡主。
+##### 1） Kernel 进程默认如果不指定资源cpu和memory会卡主。
    
    ***指定了2core 4G之后，得到明显好转***
    (规范一下资源模版: 
@@ -97,11 +97,11 @@ f. 运行稳定性优化
 
   ***如果使用其他的serverless,比如web app或者container app也要对资源做相应的配置***
 
-2） 如果单个azure openAI，用户多的时候，容易出现限流
+##### 2） 如果单个azure openAI，用户多的时候，容易出现限流
 
    ***通过roundrobin 方式，轮训和retry***
 
-3) 上传文件，如果部署多个pod的时候，出现文件找不到。(session也没有粘合)
+##### 3) 上传文件，如果部署多个pod的时候，出现文件找不到。(session也没有粘合)
 
    [绑定azure file的PVC](https://learn.microsoft.com/en-us/azure/aks/azure-csi-files-storage-provision)
 
@@ -111,13 +111,13 @@ f. 运行稳定性优化
 
    ***代码都要做相应的调整***
 
-4) 代码出现错过的概率也有
+##### 4) 代码出现错过的概率也有
 
    ***用python语法树，做语法检查。然后inject prompt，再re-generate code***
 
    ***支持pip install 通过正则匹配过滤掉***
 
-5) 使用过程中，数据出现错误，比如null值等。包括生产的代码里面运行时异常
+##### 5) 使用过程中，数据出现错误，比如null值等。包括生产的代码里面运行时异常
 
    ***常见问候，导致的代码错误，通过拒绝回答来避免错误***
 
@@ -125,7 +125,7 @@ f. 运行稳定性优化
 
    ***数据空指针等，目前应对，实际情况，考虑prompt内置一些防御的prompt，比如过滤null等让用户体验更好。***
 
-6）回答的内容，需要用用户的语言来描述和注释
+##### 6）回答的内容，需要用用户的语言来描述和注释
 
 用azure TextAnalyticsClient来检测语言的时候，***也有随机性如果输入太少比如：你好经常识别成英语，如果指定地域cn的话，容易识别成 繁体字***
 
