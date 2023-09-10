@@ -9,12 +9,6 @@ export default function Sidebar(props: {
   setOpenAIKey: any;
   openAIKey: string;
 }) {
-  const handleOpenAIButtonClick = () => {
-    const key = prompt("Please enter your OpenAI key", props.openAIKey);
-    if (key != null) {
-      props.setOpenAIKey(key);
-    }
-  };
   return (
     <>
       <div className="sidebar">
@@ -22,7 +16,7 @@ export default function Sidebar(props: {
             <AssistantIcon /> GPT-Code UI
 
             <div className='github'>
-                <a href='https://github.com/ricklamers/gpt-code-ui'>Open Source - v{import.meta.env.VITE_APP_VERSION}</a>
+                <a href='https://github.com/huqianghui/GPT-Code-Interpreter'>Open Source - v{import.meta.env.VITE_APP_VERSION}</a>
             </div>
         </div>
         <div className="settings">
@@ -40,8 +34,6 @@ export default function Sidebar(props: {
                 );
             })}
             </select>
-            <label>Credentials</label>
-            <button onClick={handleOpenAIButtonClick}>Set OpenAI key</button>
         </div>
       </div>
     </>

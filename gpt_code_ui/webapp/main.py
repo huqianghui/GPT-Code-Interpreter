@@ -8,30 +8,30 @@ import logging
 import sys
 import openai
 import pandas as pd
+import ast
 
 from collections import deque
 
 from flask_cors import CORS
 from flask import Flask, request, jsonify, send_from_directory, Response
 from dotenv import load_dotenv
+from .prompt import code_prompt, error_code_prompt
+from .openAIRoundRobin import get_openaiByRoundRobinMode,isRoundRobinMode
 
-from gpt_code_ui.kernel_program.main import APP_PORT as KERNEL_APP_PORT
+from kernel_program.main import APP_PORT as KERNEL_APP_PORT
 
 load_dotenv('.env')
 
 openai.api_version = os.environ.get("OPENAI_API_VERSION")
 openai.log = os.getenv("OPENAI_API_LOGLEVEL")
+openai.api_type == "azure"
 OPENAI_EXTRA_HEADERS = json.loads(os.environ.get("OPENAI_EXTRA_HEADERS", "{}"))
+AVAILABLE_MODELS = json.loads(os.environ["AZURE_OPENAI_DEPLOYMENTS"])
 
-if openai.api_type == "open_ai":
-    AVAILABLE_MODELS = json.loads(os.environ.get("OPENAI_MODELS", '''[{"displayName": "GPT-3.5", "name": "gpt-3.5-turbo"}, {"displayName": "GPT-4", "name": "gpt-4"}]'''))
-elif openai.api_type == "azure":
-    try:
-        AVAILABLE_MODELS = json.loads(os.environ["AZURE_OPENAI_DEPLOYMENTS"])
-    except KeyError as e:
-        raise RuntimeError('AZURE_OPENAI_DEPLOYMENTS environment variable not set') from e
-else:
-    raise ValueError(f'Invalid OPENAI_API_TYPE: {openai.api_type}')
+
+# setting log level
+log = logging.getLogger('webapp')
+log.setLevel(os.getenv("OPENAI_API_LOGLEVEL").upper())
 
 UPLOAD_FOLDER = 'workspace/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -92,58 +92,65 @@ def inspect_file(filename: str) -> str:
         return ''  # file reading failed. - Don't want to know why.
 
 
-async def get_code(user_prompt, user_openai_key=None, model="gpt-3.5-turbo"):
+def detect_language(text: str) -> str:
+    from azure.ai.textanalytics import TextAnalyticsClient
+    from azure.core.credentials import AzureKeyCredential
+    # 你的Azure文本分析服务终结点和订阅密钥
+    endpoint = os.environ.get("AZURE_TEXT_ANALYTICS_ENDPOINT")
+    subscription_key = os.environ.get("AZURE_TEXT_ANALYTICS_KEY")
+    # 创建Azure认证对象
+    credential = AzureKeyCredential(subscription_key)
+    # 创建文本分析客户端
+    text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=credential)
+    # 使用文本分析客户端检测文本的语言
+    result = text_analytics_client.detect_language(documents=[text])
+    log.warn(f"text:{text}")
+    log.warn(f"result:{result}")
+    # 获取语言检测结果
+    if result[0].is_error:
+        log.error(f"发生错误:{result[0].error}")
+        return "Chinese"
+    else:
+        detected_language = result[0].primary_language.name
+        log.warn(f"detected_language:{detected_language}")
+        return detected_language
 
-    prompt = f"""First, here is a history of what I asked you to do earlier. 
-    The actual prompt follows after ENDOFHISTORY. 
-    History:
-    {message_buffer.get_string()}
-    ENDOFHISTORY.
-    Write Python code, in a triple backtick Markdown code block, that does the following:
-    {user_prompt}
-    
-    Notes: 
-        First, think step by step what you want to do and write it down in English.
-        Then generate valid Python code in a code block 
-        Make sure all code is valid - it be run in a Jupyter Python 3 kernel environment. 
-        Define every variable before you use it.
-        For data munging, you can use 
-            'numpy', # numpy==1.24.3
-            'dateparser' #dateparser==1.1.8
-            'pandas', # matplotlib==1.5.3
-            'geopandas' # geopandas==0.13.2
-        For pdf extraction, you can use
-            'PyPDF2', # PyPDF2==3.0.1
-            'pdfminer', # pdfminer==20191125
-            'pdfplumber', # pdfplumber==0.9.0
-        For data visualization, you can use
-            'matplotlib', # matplotlib==3.7.1
-        Be sure to generate charts with matplotlib. If you need geographical charts, use geopandas with the geopandas.datasets module.
-        If the user has just uploaded a file, focus on the file that was most recently uploaded (and optionally all previously uploaded files)
-    
-    Teacher mode: if the code modifies or produces a file, at the end of the code block insert a print statement that prints a link to it as HTML string: <a href='/download?file=INSERT_FILENAME_HERE'>Download file</a>. Replace INSERT_FILENAME_HERE with the actual filename."""
+
+# 代码重试最大次数
+code_generate_retry=2
+# 代码重试计数
+code_generate_count = 0
+
+async def get_code(user_prompt,user_openai_key=None, model="gpt-3.5-turbo",user_prompt_suffix=None):
+    detectedLanguage = detect_language(user_prompt)
+    if user_prompt_suffix:
+        prompt = code_prompt.format(history=message_buffer.get_string(), user_prompt=user_prompt + user_prompt_suffix,user_language=detectedLanguage)
+    else:
+        prompt = code_prompt.format(history=message_buffer.get_string(), user_prompt=user_prompt,user_language=detectedLanguage)
 
     if user_openai_key:
         openai.api_key = user_openai_key
 
     arguments = dict(
-        temperature=0.7,
+        temperature=0,
         headers=OPENAI_EXTRA_HEADERS,
+        deployment_id=model,
         messages=[
             # {"role": "system", "content": system},
             {"role": "user", "content": prompt},
         ]
     )
 
-    if openai.api_type == 'open_ai':
-        arguments["model"] = model
-    elif openai.api_type == 'azure':
-        arguments["deployment_id"] = model
-    else:
-        return None, f"Error: Invalid OPENAI_PROVIDER: {openai.api_type}", 500
-
     try:
-        result_GPT = openai.ChatCompletion.create(**arguments)
+
+        # 通过roundrobin 方式，轮训和retry
+        if(isRoundRobinMode()):
+            log.info(">>>>>round robin mode to access azure openAI services")
+            roundRobinOpenAI = get_openaiByRoundRobinMode()
+            result_GPT = roundRobinOpenAI.ChatCompletion.create(**arguments)
+        else:
+            log.info(">>>>>default mode to access azure openAI services")        
+            result_GPT = openai.ChatCompletion.create(**arguments)
 
         if 'error' in result_GPT:
             raise openai.APIError(code=result_GPT.error.code, message=result_GPT.error.message)
@@ -170,12 +177,31 @@ async def get_code(user_prompt, user_openai_key=None, model="gpt-3.5-turbo"):
             single_match = re.search(r'`(.+?)`', text, re.DOTALL)
             if single_match:
                 return single_match.group(1).strip()
+            
+    sourceCode = extract_code(content)
+     # 4. 判断是否是python，排除一些pip install的情况，用python语法树，做语法检查
+    try:
+        if sourceCode:
+            python_pattern = r'^\s*(import|from|def|class|if|for|while|try|except|print|.+=.+|.+\(.*\)|.+:\s*$)'
+            if re.match(python_pattern, sourceCode) is not None:
+               ast.parse(sourceCode)
+               return  sourceCode, content.strip(), 200 
+            else:
+               return  sourceCode, content.strip(), 200  
+        else:
+            return sourceCode, content.strip(), 200
+    except SyntaxError as e:
+        global code_generate_count
+        code_generate_count += 1
+        if code_generate_count < code_generate_retry:
+            exceptionstr = str(e)
+            error_code_prompt_str= error_code_prompt.format(sourceCode, exceptionstr)
 
-    return extract_code(content), content.strip(), 200
+            user_prompt_suffix = prompt + error_code_prompt_str
+            return await get_code(user_prompt,user_openai_key, model,user_prompt_suffix)
+        else:
+            return sourceCode, "The generated codes always have some error, please try fresh the page and reset the kernel and try to change some input words.", 500
 
-# We know this Flask app is for local use. So we can disable the verbose Werkzeug logger
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
 
 cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
