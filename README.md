@@ -91,7 +91,7 @@ load_dotenv('.env')
 
 ##### 1） Kernel 进程默认如果不指定资源cpu和memory会卡主。
    
-   ***指定了2core 4G之后，得到明显好转***
+   指定了2core 4G之后，得到明显好转
    (规范一下资源模版: 
    [为容器和 Pod 分配内存资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-memory-resource/) | [为容器和 Pods 分配 CPU 资源](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/assign-cpu-resource/))
 
@@ -99,7 +99,7 @@ load_dotenv('.env')
 
 ##### 2） 如果单个azure openAI，用户多的时候，容易出现限流
 
-   ***通过roundrobin 方式，轮训和retry***
+   通过roundrobin 方式，轮训和retry
 
 ##### 3) 上传文件，如果部署多个pod的时候，出现文件找不到。(session也没有粘合)
 
@@ -113,17 +113,17 @@ load_dotenv('.env')
 
 ##### 4) 代码出现错过的概率也有
 
-   ***用python语法树，做语法检查。然后inject prompt，再re-generate code***
+   用python语法树，做语法检查。然后inject prompt，再re-generate code
 
-   ***支持pip install 通过正则匹配过滤掉***
+   支持pip install 通过正则匹配过滤掉
 
 ##### 5) 使用过程中，数据出现错误，比如null值等。包括生产的代码里面运行时异常
 
-   ***常见问候，导致的代码错误，通过拒绝回答来避免错误***
+   常见问候，导致的代码错误，通过拒绝回答来避免错误
 
-   ***比如去访问的数据结构，比如询问天气，调用的API是401错误，但是没有判断，所以接下来会出现runtime Exception，不生成python来规避***
+   比如去访问的数据结构，比如询问天气，调用的API是401错误，但是没有判断，所以接下来会出现runtime Exception，不生成python来规避
 
-   ***数据空指针等，目前应对，实际情况，考虑prompt内置一些防御的prompt，比如过滤null等让用户体验更好。***
+   数据空指针等，目前应对，实际情况，考虑prompt内置一些防御的prompt，比如过滤null等让用户体验更好。
 
 ##### 6）回答的内容，需要用用户的语言来描述和注释
 
