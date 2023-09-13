@@ -1,6 +1,7 @@
 ###  1. openAI的chatgpt提供新功能 code interpreter 
 
 B站视频讲解： https://www.bilibili.com/video/BV1LH4y1Q7X8/
+
 youtube视频讲解： https://youtu.be/erETVeOU_5U
 
 <img width="600" alt="gpt-code-diagram" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/d3ffedac-03e5-4447-a620-ca4d24e1f974">
