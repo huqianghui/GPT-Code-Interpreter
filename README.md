@@ -130,8 +130,9 @@ clone下来，运行起来，遇到一个错误。(https://github.com/shroominic
          用azure TextAnalyticsClient来检测语言的时候，***也有随机性如果输入太少比如：你好经常识别成英语，如果指定地域cn的话，容易识别成 繁体字***
 
 ##### 7） 在matlibplot中，图片中的字体乱码。
-      本地安装字体，然后指定一下字体内容。
-      <img width="780" alt="chinese-font" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/44023403-2e5a-4205-bc4b-b3fba0d7e281">
+      
+本地安装字体，然后指定一下字体内容。
+<img width="780" alt="chinese-font" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/44023403-2e5a-4205-bc4b-b3fba0d7e281">
    
  
 
