@@ -1,6 +1,6 @@
 ###  1. openAI的chatgpt提供新功能 code interpreter 
 
-![gpt-code-diagram](https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/d3ffedac-03e5-4447-a620-ca4d24e1f974)
+<img width="900" alt="gpt-code-diagram" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/d3ffedac-03e5-4447-a620-ca4d24e1f974">
 
 代码解释器特别有用的用例如下：
 
