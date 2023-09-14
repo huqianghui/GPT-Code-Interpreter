@@ -136,14 +136,15 @@ clone下来，运行起来，遇到一个错误。(https://github.com/shroominic
 ##### 7） 在matlibplot中，图片中的字体乱码。
       
 本地安装字体，然后指定一下字体内容。可以在font文档夹中获取到。
+
 把font放到拷贝到：
 
-~/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf
+   ~/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf
 
 修改文件：
 
-~/python3.10/site-packages/matplotlib/mpl-data/matplotlibrc
-#font.sans-serif: SimHei,
+   ~/python3.10/site-packages/matplotlib/mpl-data/matplotlibrc
+   #font.sans-serif: SimHei,
 
 效果如下图： 中文可以正常显示：
 
