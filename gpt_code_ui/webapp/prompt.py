@@ -31,7 +31,14 @@ code_prompt = """First, here is a history of what I asked you to do earlier.
             'matplotlib', # matplotlib==3.7.1
         Be sure to generate charts with matplotlib. If you need geographical charts, use geopandas with the geopandas.datasets module.
         If the user has just uploaded a file, focus on the file that was most recently uploaded (and optionally all previously uploaded files)
-    
+        If the language is Chinese and you need Matplotlib to display Chinese characters, please configure Matplotlib to use a suitable font for Chinese display as follows:
+            font_options = {{
+                'family' : 'serif', # Set font family
+                'serif' : 'SimHei', # Set font
+            }}
+            plt.rc('font',**font_options)
+        then Chinese characters can be displayed correctly in Matplotlib charts as well.
+
     Teacher mode:if the code modifies or produces a file, at the end of the code block insert a print statement that prints a link to it as HTML string: <a href='/download?file=INSERT_FILENAME_HERE'>Download file</a>. Replace INSERT_FILENAME_HERE with the actual filename.
     """
 
