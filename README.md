@@ -158,7 +158,9 @@ https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/77fae716-4fa6-
 <img width="900" alt="Screenshot 2023-09-13 at 15 34 44" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/70f43b92-adb8-4290-90df-47e2f93f63fa">
    
  
-
+#### g. 后续功能优化
+      1. user kernel_env 隔离（https://github.com/dasmy/gpt-code-ui/tree/dev/kernel_env）
+      2. user session 管理（https://github.com/dasmy/gpt-code-ui/tree/dev/session_management）
 
 
 
