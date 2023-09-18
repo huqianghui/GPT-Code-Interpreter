@@ -64,6 +64,13 @@ clone下来，运行起来，遇到一个错误。(https://github.com/shroominic
 
 #### d. 示例运行
 
+
+功能视频演示如下：
+
+https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/77fae716-4fa6-4375-a6b9-7e3936b771d7
+
+
+
 ##### 1） 上传一个csv文件，让它给出一些可视化统计。(Can you run some basic visualization?)
 <img width="769" alt="Screenshot 2023-08-22 at 15 52 43" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/01f91eba-3cae-4841-8d67-e6fcca37885a">
 
