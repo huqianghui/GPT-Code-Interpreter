@@ -159,7 +159,9 @@ https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/77fae716-4fa6-
    
  
 #### g. 后续功能优化
-      1. user kernel_env 隔离（https://github.com/dasmy/gpt-code-ui/tree/dev/kernel_env）
+      1. user kernel_env 隔离
+      （https://github.com/dasmy/gpt-code-ui/tree/dev/kernel_env）
+      （https://github.com/shroominic/codebox-api/tree/main）
       2. user session 管理（https://github.com/dasmy/gpt-code-ui/tree/dev/session_management）
 
 
