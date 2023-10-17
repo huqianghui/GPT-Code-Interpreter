@@ -86,14 +86,7 @@ https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/77fae716-4fa6-
 
 ##### 4) mysql 数据库连接，查询数据
 
-      prompt :
-   
-      connect to the mysql server by the connection information:（
-       host="codex-sample-server.mysql.database.azure.com",
-       user="huqianghui",
-       password="XXXXX",
-       database="codex-sample"
-   )，query the books table, group by column "authors" of top 5 in bar picture.
+   @sql,query the books table, group by column "authors" of top 5 in bar picture and the column "authors" is not null.
    
    <img width="1503" alt="262365764-8d27646a-aef1-471a-940d-b79cc1f54664" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/cba42275-8e3b-470d-82f9-40424fa1bb17">
    
