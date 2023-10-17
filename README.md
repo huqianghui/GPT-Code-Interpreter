@@ -87,11 +87,8 @@ https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/77fae716-4fa6-
 ##### 4) mysql 数据库连接，查询数据
 
    @sql,query the books table, group by column "authors" of top 5 in bar picture and the column "authors" is not null.
-   
-   <img width="1503" alt="262365764-8d27646a-aef1-471a-940d-b79cc1f54664" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/cba42275-8e3b-470d-82f9-40424fa1bb17">
-   
-   <img width="1435" alt="Screenshot 2023-08-22 at 21 24 41" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/2308848d-4718-4ebb-9aa7-71da18fe4f3c">
 
+<img width="1440" alt="Screenshot 2023-10-17 at 13 39 45" src="https://github.com/huqianghui/GPT-Code-Interpreter/assets/7360524/af7e6df7-da88-4e1d-9e69-d24cc90497d2">
 
 #### f. 运行稳定性优化
 
