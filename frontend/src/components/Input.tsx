@@ -8,7 +8,7 @@ import "./Input.css";
 import Button from 'react-bootstrap/Button'
 import { AudioConfig, AudioInputStream, PullAudioInputStreamCallback, AutoDetectSourceLanguageConfig,SpeechRecognitionEventArgs,SpeechConfig, SpeechRecognizer,Recognizer,ResultReason,CancellationReason } from 'microsoft-cognitiveservices-speech-sdk'
 
-const API_KEY = "ea614f6c7cd348d7822aea7dc314c1ad"
+const API_KEY = "XXXXXXXXXXXXXX"
 const API_LOCATION = "westus2"
 
 // this will be used for continuous speech recognition
