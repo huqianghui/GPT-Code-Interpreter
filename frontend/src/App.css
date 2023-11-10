@@ -17,3 +17,21 @@
   overflow: hidden;
   height: 100vh;
 }
+.container {  
+  display: flex;  
+  align-items: left; 
+}  
+  
+.AudioRecorder {  
+  flex: 0;  
+  display: flex; 
+  justify-content: left;  
+}  
+  
+.InputWrapper {  
+  flex: 0;  
+}  
+
+.Input {  
+  width: 100%; /* 添加这一行 */  
+}  

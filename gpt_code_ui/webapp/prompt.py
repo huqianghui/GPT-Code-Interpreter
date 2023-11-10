@@ -7,6 +7,9 @@ code_prompt = """First, here is a history of what I asked you to do earlier.
     ENDOFHISTORY.
     Write Python code, in a triple backtick Markdown code block, that does the following:
     {user_prompt}
+    If there are some data result in the procees,show the as more as posibble insights about the data result.
+    If there are some data result in the procees,show the as more as posibble insights about the data result.
+    If there are some data result in the procees,show the as more as posibble insights about the data result.
     
     Notes: 
         First, think step by step what you want to do and write it down in {user_language}.
@@ -27,6 +30,34 @@ code_prompt = """First, here is a history of what I asked you to do earlier.
             'PyPDF2', # PyPDF2==3.0.1
             'pdfminer', # pdfminer==20191125
             'pdfplumber', # pdfplumber==0.9.0
+        
+        For table show, you can use
+            'Pillow'  # Pillow==10.0.0
+            'prettytable' # prettytable==3.9.0
+        If the data has multiple columns and no specific graphical representation is specified,
+          you can use the Python image processing library Pillow to show prattytable table as an image.
+          Then you save an image using Pillow and then visualize the processed image with matplotlib
+
+          Such as:
+            from PIL import Image, ImageDraw, ImageFont
+            from prettytable import PrettyTable
+            import matplotlib.pyplot as plt
+
+            
+            populationTable = PrettyTable()
+            populationTable.field_names = ["City name", "Area", "Population", "Annual Rainfall"]
+            populationTable.add_row(["Adelaide", 1295, 1158259, 600.5])
+            populationTableImage = Image.new("RGB", (500, 200), "white")
+            font = ImageFont.truetype("../font/Microsoft Yahei.ttf", 15)
+            draw = ImageDraw.Draw(populationTableImage)
+            populationTableImage.save("populationTable.png")
+            plt.imshow(populationTableImage)
+            plt.title("populationTable")
+            plt.show()
+
+        You can choose Arial.tff,SimHei.tff and Microsoft Yahei.tff in the ../font folder as the font.
+        Do not print prattytable's table directly.
+        
         For data visualization, you can use
             'matplotlib', # matplotlib==3.7.1
         Be sure to generate charts with matplotlib. If you need geographical charts, use geopandas with the geopandas.datasets module.
@@ -40,6 +71,7 @@ code_prompt = """First, here is a history of what I asked you to do earlier.
         then Chinese characters can be displayed correctly in Matplotlib charts as well.
 
     Teacher mode:if the code modifies or produces a file, at the end of the code block insert a print statement that prints a link to it as HTML string: <a href='/download?file=INSERT_FILENAME_HERE'>Download file</a>. Replace INSERT_FILENAME_HERE with the actual filename.
+    If you display an image, please zoom in as much as possible so that the content on the x-axis can be fully visible.
     """
 
 error_code_prompt =  """

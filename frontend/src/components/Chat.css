@@ -73,3 +73,61 @@ div.message-body {
     100% { transform: rotate(360deg); }
 }
 
+.chat-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .chat-header span {
+    font-weight: bold;
+  }
+  
+  .arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+  }
+  
+  .arrow.up {
+    border-color: #000 transparent transparent transparent;
+    transform: rotate(180deg);
+  }
+  
+  .arrow.down {
+    border-color: transparent transparent #000 transparent;
+  }
+
+  div.message-header {
+    display: flex;
+    background-color: #e3f9e5;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  div.message-header span {
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  div.message-header i {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    border-style: solid;
+    border-width: 5px 5px 0 5px;
+    border-color: #000 transparent transparent transparent;
+  }

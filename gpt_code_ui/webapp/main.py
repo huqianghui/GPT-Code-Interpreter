@@ -13,10 +13,11 @@ import ast
 from collections import deque
 
 from flask_cors import CORS
-from flask import Flask, request, jsonify, send_from_directory, Response
+from flask import Flask, request, jsonify, send_from_directory, Response,render_template
 from dotenv import load_dotenv
 from .prompt import code_prompt, error_code_prompt
-from .openAIRoundRobin import get_openaiByRoundRobinMode,isRoundRobinMode
+from .openAIRoundRobin import isRoundRobinMode,get_openaiByRoundRobinMode
+#from .VerticaDataDictionary import getDataDictionary,clearCache
 
 from kernel_program.main import APP_PORT as KERNEL_APP_PORT
 
@@ -25,9 +26,8 @@ load_dotenv('.env')
 openai.api_version = os.environ.get("OPENAI_API_VERSION")
 openai.log = os.getenv("OPENAI_API_LOGLEVEL")
 openai.api_type == "azure"
-OPENAI_EXTRA_HEADERS = json.loads(os.environ.get("OPENAI_EXTRA_HEADERS", "{}"))
 AVAILABLE_MODELS = json.loads(os.environ["AZURE_OPENAI_DEPLOYMENTS"])
-
+SQL_CONNECTION_STR= os.getenv("SQL_CONNECTION_STR")
 
 # setting log level
 log = logging.getLogger('webapp')
@@ -36,9 +36,7 @@ log.setLevel(os.getenv("OPENAI_API_LOGLEVEL").upper())
 UPLOAD_FOLDER = 'workspace/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
 APP_PORT = int(os.environ.get("WEB_PORT", 8080))
-
 
 class LimitedLengthString:
     def __init__(self, maxlen=2000):
@@ -57,13 +55,10 @@ class LimitedLengthString:
         result = ''.join(self.data)
         return result[-self.maxlen:]
 
-
 message_buffer = LimitedLengthString()
-
 
 def allowed_file(filename):
     return True
-
 
 def inspect_file(filename: str) -> str:
     READER_MAP = {
@@ -121,7 +116,7 @@ code_generate_retry=2
 # 代码重试计数
 code_generate_count = 0
 
-async def get_code(user_prompt,user_openai_key=None, model="gpt-3.5-turbo",user_prompt_suffix=None):
+async def get_code(user_prompt,model,user_openai_key=None, user_prompt_suffix=None):
     detectedLanguage = detect_language(user_prompt)
     if user_prompt_suffix:
         prompt = code_prompt.format(history=message_buffer.get_string(), user_prompt=user_prompt + user_prompt_suffix,user_language=detectedLanguage)
@@ -133,8 +128,8 @@ async def get_code(user_prompt,user_openai_key=None, model="gpt-3.5-turbo",user_
 
     arguments = dict(
         temperature=0,
-        headers=OPENAI_EXTRA_HEADERS,
         deployment_id=model,
+        timeout=30,
         messages=[
             # {"role": "system", "content": system},
             {"role": "user", "content": prompt},
@@ -198,10 +193,9 @@ async def get_code(user_prompt,user_openai_key=None, model="gpt-3.5-turbo",user_
             error_code_prompt_str= error_code_prompt.format(sourceCode, exceptionstr)
 
             user_prompt_suffix = prompt + error_code_prompt_str
-            return await get_code(user_prompt,user_openai_key, model,user_prompt_suffix)
+            return await get_code(user_prompt,model,user_openai_key, user_prompt_suffix)
         else:
             return sourceCode, "The generated codes always have some error, please try fresh the page and reset the kernel and try to change some input words.", 500
-
 
 cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
@@ -211,7 +205,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 CORS(app)
 
-
 @app.route('/')
 def index():
 
@@ -220,12 +213,11 @@ def index():
         print("index.html not found in static folder. Exiting. Did you forget to run `make compile_frontend` before installing the local package?")
 
     return send_from_directory('static', 'index.html')
-
+    #return render_template('index.html')
 
 @app.route("/models")
 def models():
     return jsonify(AVAILABLE_MODELS)
-
 
 @app.route('/api/<path:path>', methods=["GET", "POST"])
 def proxy_kernel_manager(path):
@@ -243,11 +235,9 @@ def proxy_kernel_manager(path):
     response = Response(resp.content, resp.status_code, headers)
     return response
 
-
 @app.route('/assets/<path:path>')
 def serve_static(path):
     return send_from_directory('static/assets/', path)
-
 
 @app.route('/download')
 def download_file():
@@ -258,7 +248,6 @@ def download_file():
     # make sure to set required headers to make it download the file
     return send_from_directory(os.path.join(os.getcwd(), 'workspace'), file, as_attachment=True)
 
-
 @app.route('/inject-context', methods=['POST'])
 def inject_context():
     user_prompt = request.json.get('prompt', '')
@@ -267,7 +256,6 @@ def inject_context():
     message_buffer.append(user_prompt + "\n\n")
 
     return jsonify({"result": "success"})
-
 
 @app.route('/generate', methods=['POST'])
 def generate_code():
@@ -278,15 +266,20 @@ def generate_code():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
+    user_prompt_suffix = None
+    if(("@sql" in user_prompt.lower() or "@mysql" in user_prompt.lower()) and SQL_CONNECTION_STR):
+        # tableAndFieldSchema = getDataDictionary()
+        # user_prompt_suffix = "database connection as follow" + SQL_CONNECTION_STR + "\n" + " Users typically input table names and field names, often using aliases. These aliases are defined in the TABLE_KEYWORDS and FIELD_KEYWORDS fields, with different aliases separated by commas. When you need to write SQL queries, you'll need to map these aliases to the correct TABLE_NAME and FIELD_NAME in the following schema information:\n" + tableAndFieldSchema
+        user_prompt_suffix = "database connection as follow" + SQL_CONNECTION_STR
+        
     code, text, status = loop.run_until_complete(
-        get_code(user_prompt, user_openai_key, model))
+        get_code(user_prompt, model,user_openai_key,user_prompt_suffix))
     loop.close()
 
     # Append all messages to the message buffer for later use
     message_buffer.append(user_prompt + "\n\n")
 
     return jsonify({'code': code, 'text': text}), status
-
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -306,6 +299,11 @@ def upload_file():
     else:
         return jsonify({'error': 'File type not allowed'}), 400
 
+
+@app.route('/clear', methods=["GET", "POST"])
+def clear():
+    pass
+    #clearCache()
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=APP_PORT, debug=True, use_reloader=False)

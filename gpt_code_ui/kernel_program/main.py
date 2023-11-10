@@ -37,10 +37,6 @@ send_queue = Queue()
 
 messaging = None
 
-# We know this Flask app is for local use. So we can disable the verbose Werkzeug logger
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
-
 cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
 

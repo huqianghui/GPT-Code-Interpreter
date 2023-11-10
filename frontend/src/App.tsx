@@ -15,7 +15,7 @@ export type MessageDict = {
 function App() {
   const COMMANDS = ["reset"];
 
-  let [MODELS, setModels] = useState([{displayName: "GPT-3.5", name: "gpt-3.5-turbo"}]);
+  let [MODELS, setModels] = useState([{"displayName": "GPT-4", "name": "gpt4"},{"displayName": "GPT-3.5", "name": "gpt-35-turbo"}]);
 
   useEffect(() => {
     const getModels = async () => {
@@ -41,15 +41,10 @@ function App() {
   let [messages, setMessages] = useState<Array<MessageDict>>(
     Array.from([
       {
-        text: "Hello! I'm a GPT Code assistant. Ask me to do something for you! Pro tip: you can upload a file and I'll be able to use it.",
+        text: "Hello! I'm an Advanced Data Analysis. Please enjoy your data exploration journey.",
         role: "generator",
         type: "message",
-      },
-      {
-        text: "If I get stuck just type 'reset' and I'll restart the kernel.",
-        role: "generator",
-        type: "message",
-      },
+      }
     ])
   );
   let [waitingForSystem, setWaitingForSystem] = useState<WaitingStates>(
@@ -221,30 +216,36 @@ function App() {
 
   return (
     <>
-      <div className="app">
-        <Sidebar
-          models={MODELS}
-          selectedModel={selectedModel}
-          onSelectModel={(val: string) => {
-            setSelectedModel(val);
-          }}
-          openAIKey={openAIKey}
-          setOpenAIKey={(val: string) => {
-            setOpenAIKey(val);
-          }}
-        />
-        <div className="main">
-          <Chat
-            chatScrollRef={chatScrollRef}
-            waitingForSystem={waitingForSystem}
-            messages={messages}
-          />
-          <Input
-            onSendMessage={sendMessage}
-            onCompletedUpload={completeUpload}
-            onStartUpload={startUpload}
-          />
-        </div>
+       <div className="app">  
+        <Sidebar  
+          models={MODELS}  
+          selectedModel={selectedModel}  
+          onSelectModel={(val: string) => {  
+            setSelectedModel(val);  
+          }}  
+          openAIKey={openAIKey}  
+          setOpenAIKey={(val: string) => {  
+            setOpenAIKey(val);  
+          }}  
+        />  
+        <div className="main">  
+          <Chat  
+            chatScrollRef={chatScrollRef}  
+            waitingForSystem={waitingForSystem}  
+            messages={messages}  
+          />  
+          <div className="container">  
+            <div className="AudioRecorder">  
+            </div>  
+            <div className="Input">  
+            <Input  
+              onSendMessage={sendMessage}  
+              onCompletedUpload={completeUpload}  
+              onStartUpload={startUpload}  
+            />  
+            </div>  
+          </div>  
+        </div>  
       </div>
     </>
   );

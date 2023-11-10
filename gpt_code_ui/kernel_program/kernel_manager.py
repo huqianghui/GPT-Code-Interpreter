@@ -9,6 +9,8 @@ import threading
 import time
 import atexit
 import traceback
+import openai
+
 
 from time import sleep
 from jupyter_client import BlockingKernelClient
@@ -19,10 +21,18 @@ load_dotenv('.env')
 import kernel_program.utils as utils
 import kernel_program.config as config
 
+from kernel_program.runtime_prompt import runtime_exception_prompt
+from kernel_program.openAIRoundRobin import get_openaiByRoundRobinMode,isRoundRobinMode
+
+AZURE_OPENAI_DEPLOYMENTS = json.loads(os.environ.get("AZURE_OPENAI_DEPLOYMENTS", "[]"))
+deployment_id = AZURE_OPENAI_DEPLOYMENTS[0].get("name")
+openai.api_version = os.environ.get("OPENAI_API_VERSION")
+openai.log = os.getenv("OPENAI_API_LOGLEVEL")
+openai.api_type == "azure"
+
 # Set up globals
 messaging = None
 logger = config.get_logger()
-
 
 class FlushingThread(threading.Thread):
     def __init__(self, kc, kill_sema):
@@ -40,7 +50,6 @@ class FlushingThread(threading.Thread):
 
             flush_kernel_msgs(self.kc)
             time.sleep(1)
-
 
 def cleanup_spawned_processes():
     print("Cleaning up kernels...")
@@ -65,7 +74,6 @@ def cleanup_spawned_processes():
                     pass
             except Exception as e:
                 logger.debug(e)
-
 
 def start_snakemq(kc):
     global messaging
@@ -101,7 +109,6 @@ def start_snakemq(kc):
         logger.error("Error in snakemq loop: %s" % e)
         sys.exit(1)
 
-
 def start_flusher(kc):
     # Start FlushMessenger
     kill_sema = threading.Semaphore()
@@ -114,17 +121,51 @@ def start_flusher(kc):
 
     atexit.register(end_thread)
 
-
 def send_message(message, message_type="message"):
     utils.send_json(
         messaging, {"type": message_type, "value": message}, config.IDENT_MAIN
     )
 
 
+def exception_explation(runtime_exception_stack):
+    traceList = runtime_exception_stack["content"]["traceback"]
+    traceStack= ''.join(traceList)
+    # if len(traceStack) > 3500:
+    #     traceStack = traceback[-3500:] + "..."
+
+    prompt = runtime_exception_prompt.format(runtime_exception_stack=traceStack)
+    
+    arguments = dict(
+        temperature=0,
+        deployment_id=deployment_id,
+        timeout=30,
+        messages=[
+            # {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ]
+    )
+
+    try:
+        # 通过roundrobin 方式，轮训和retry
+        if(isRoundRobinMode()):
+            logger.info(">>>>>round robin mode to access azure openAI services")
+            roundRobinOpenAI = get_openaiByRoundRobinMode()
+            result_GPT = roundRobinOpenAI.ChatCompletion.create(**arguments)
+        else:
+            logger.info(">>>>>default mode to access azure openAI services")        
+            result_GPT = openai.ChatCompletion.create(**arguments)
+        
+        content = result_GPT.choices[0].message.content
+    except Exception as e:
+        logger.debug(f"{e} [{type(e)}")
+        logger.debug(traceback.format_exc())
+        content = runtime_exception_stack["content"]["traceback"]
+    
+    return content
+
 def flush_kernel_msgs(kc, tries=1, timeout=0.2):
     try:
-        hit_empty = 0
-
+        hit_empty = 0        
         while True:
             try:
                 msg = kc.get_iopub_msg(timeout=timeout)
@@ -134,6 +175,7 @@ def flush_kernel_msgs(kc, tries=1, timeout=0.2):
                             msg["content"]["data"]["text/plain"], "message_raw"
                         )
                 if msg["msg_type"] == "display_data":
+                    print(">>>>>2>>>>>>>> display_data")
                     if "image/png" in msg["content"]["data"]:
                         # Convert to Slack upload
                         send_message(
@@ -147,10 +189,10 @@ def flush_kernel_msgs(kc, tries=1, timeout=0.2):
                     logger.debug("Received stream output %s" % msg["content"]["text"])
                     send_message(msg["content"]["text"])
                 elif msg["msg_type"] == "error":
-                    send_message(
-                        utils.escape_ansi("\n".join(msg["content"]["traceback"])),
-                        "message_raw",
-                    )
+                   print(">>>>>4>>>>>>>> 错误》》》》》》》》》")
+                   logger.error(msg["content"]["traceback"])
+                   content = exception_explation(msg) 
+                   send_message(content,"message_raw")
             except queue.Empty:
                 hit_empty += 1
                 if hit_empty == tries:
@@ -165,7 +207,6 @@ def flush_kernel_msgs(kc, tries=1, timeout=0.2):
                 break
     except Exception as e:
         logger.debug(f"{e} [{type(e)}")
-
 
 def start_kernel():
     kernel_connection_file = os.path.join(os.getcwd(), "kernel_connection_file.json")
@@ -217,7 +258,6 @@ def start_kernel():
     kc.start_channels()
     kc.wait_for_ready()
     return kc
-
 
 if __name__ == "__main__":
     kc = start_kernel()

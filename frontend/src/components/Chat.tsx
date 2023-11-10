@@ -8,7 +8,7 @@ import { MessageDict } from "../App";
 
 import remarkGfm from 'remark-gfm';
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { RefObject } from "react";
+import { RefObject,useState } from "react";
 import ReactMarkdown from 'react-markdown';
 
 function Message(props: {
@@ -22,6 +22,11 @@ function Message(props: {
   const isMarkdown = (input: string) => {
     const mdRegex = /\[.*\]\(.*\)|\*\*.*\*\*|__.*__|\#.*|\!\[.*\]\(.*\)|`.*`|\- .*|\|.*\|/g;
     return mdRegex.test(input);
+  };
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
   };
 
   let ICONS = {
@@ -45,8 +50,13 @@ function Message(props: {
               {text} {props.showLoader ? <div className="loader"></div> : null}
             </div>
           ) : (
-            isMarkdown(text) ? 
-              <ReactMarkdown
+            isMarkdown(text) ?
+              <div className="chat-container">
+              <div className="message-header" onClick={toggleExpand}>
+                  <span>{isExpanded ? '收起内容' : '显示源码内容'}</span>
+                  <i className={`arrow ${isExpanded ? 'up' : 'down'}`} />
+              </div> 
+              {isExpanded && <ReactMarkdown
               children={text}
               remarkPlugins={[remarkGfm]}
               components={{
@@ -67,7 +77,8 @@ function Message(props: {
                   )
                 }
               }}
-            />
+            />}
+            </div>
           :
             <div className="cell-output" dangerouslySetInnerHTML={{ __html: text }}></div>
           ))}
